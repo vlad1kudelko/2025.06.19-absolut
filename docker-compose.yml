@@ -1,0 +1,86 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    build: ./postgres
+    container_name: absolut_postgres
+    environment:
+      POSTGRES_DB: absolut_db
+      POSTGRES_USER: absolut_user
+      POSTGRES_PASSWORD: absolut_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - absolut_network
+    restart: unless-stopped
+
+  # Django Backend
+  django:
+    build: ./backend
+    container_name: absolut_django
+    environment:
+      - DATABASE_URL=postgresql://absolut_user:absolut_password@postgres:5432/absolut_db
+      - DEBUG=True
+      - SECRET_KEY=your-secret-key-here
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+    volumes:
+      - ./backend:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - absolut_network
+    restart: unless-stopped
+    command: python manage.py runserver 0.0.0.0:8000
+
+  # React Frontend
+  react:
+    build: ./frontend
+    container_name: absolut_react
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - django
+    networks:
+      - absolut_network
+    restart: unless-stopped
+    command: npm start
+
+  # Nginx Reverse Proxy
+  nginx:
+    build: ./nginx
+    container_name: absolut_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - static_volume:/var/www/static
+      - media_volume:/var/www/media
+    depends_on:
+      - django
+      - react
+    networks:
+      - absolut_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  absolut_network:
+    driver: bridge 
