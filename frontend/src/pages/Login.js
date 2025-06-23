@@ -2,17 +2,23 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { Card, CardContent, Typography, Box, TextField, Button, Alert } from '@mui/material';
+import { api } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
-      // Здесь будет логика авторизации
-      console.log('Login data:', data);
+      // Отправляем данные на Django endpoint авторизации
+      const response = await api.post('/api/auth/login/', data);
+      const token = response.data.token;
+      localStorage.setItem('token', token);
       toast.success('Вход выполнен успешно!');
+      navigate('/');
     } catch (error) {
-      toast.error('Ошибка входа');
+      toast.error('Ошибка входа: ' + (error.response?.data?.detail || 'Проверьте логин и пароль'));
     }
   };
 
