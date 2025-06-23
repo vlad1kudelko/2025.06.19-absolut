@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
+import { Card, CardContent, Typography, Box, TextField, Button, Alert } from '@mui/material';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -16,64 +17,46 @@ const Login = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="card">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Вход в систему
-        </h2>
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-              Имя пользователя
-            </label>
-            <input
-              id="username"
-              type="text"
+    <Box maxWidth={400} mx="auto">
+      <Card sx={{ mt: 6, p: 2 }}>
+        <CardContent>
+          <Typography variant="h5" fontWeight="bold" gutterBottom align="center">
+            Вход в систему
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              label="Имя пользователя"
+              variant="outlined"
+              fullWidth
               {...register('username', { required: 'Имя пользователя обязательно' })}
-              className="input-field"
-              placeholder="Введите имя пользователя"
+              error={!!errors.username}
+              helperText={errors.username?.message}
             />
-            {errors.username && (
-              <p className="text-red-600 text-sm mt-1">{errors.username.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Пароль
-            </label>
-            <input
-              id="password"
+            <TextField
+              label="Пароль"
               type="password"
+              variant="outlined"
+              fullWidth
               {...register('password', { required: 'Пароль обязателен' })}
-              className="input-field"
-              placeholder="Введите пароль"
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
-            {errors.password && (
-              <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="w-full btn-primary"
-          >
-            Войти
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Нет аккаунта?{' '}
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-              Зарегистрироваться
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
+            <Button type="submit" variant="contained" color="primary" size="large" fullWidth>
+              Войти
+            </Button>
+          </Box>
+          <Box mt={4} textAlign="center">
+            <Typography variant="body2" color="text.secondary">
+              Нет аккаунта?{' '}
+              <Button variant="text" color="primary" size="small">
+                Зарегистрироваться
+              </Button>
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
-export default Login; 
+export default Login;

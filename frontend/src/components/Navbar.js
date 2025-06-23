@@ -1,52 +1,57 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { HomeIcon, CubeIcon, TagIcon, UserIcon } from '@heroicons/react/24/outline';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import HomeIcon from '@mui/icons-material/Home';
+import CategoryIcon from '@mui/icons-material/Category';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import PersonIcon from '@mui/icons-material/Person';
+import Box from '@mui/material/Box';
+
+const navItems = [
+  { name: 'Главная', href: '/', icon: <HomeIcon /> },
+  { name: 'Элементы', href: '/items', icon: <Inventory2Icon /> },
+  { name: 'Категории', href: '/categories', icon: <CategoryIcon /> },
+  { name: 'Войти', href: '/login', icon: <PersonIcon /> },
+];
 
 const Navbar = () => {
   const location = useLocation();
 
-  const navItems = [
-    { name: 'Главная', href: '/', icon: HomeIcon },
-    { name: 'Элементы', href: '/items', icon: CubeIcon },
-    { name: 'Категории', href: '/categories', icon: TagIcon },
-    { name: 'Войти', href: '/login', icon: UserIcon },
-  ];
-
   return (
-    <nav className="bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">Absolut</h1>
-            </Link>
-          </div>
-          
-          <div className="flex items-center space-x-8">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.href;
-              
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    isActive
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </nav>
+    <AppBar position="static" color="default" enableColorOnDark>
+      <Toolbar>
+        <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
+          Absolut
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          {navItems.map((item) => (
+            <IconButton
+              key={item.name}
+              component={Link}
+              to={item.href}
+              color={location.pathname === item.href ? 'primary' : 'inherit'}
+              sx={{
+                borderRadius: 2,
+                bgcolor: location.pathname === item.href ? 'action.selected' : 'transparent',
+                '&:hover': { bgcolor: 'action.hover' },
+                px: 2,
+                py: 1,
+                transition: 'background 0.2s',
+              }}
+            >
+              {item.icon}
+              <Typography variant="body2" sx={{ ml: 1, color: 'inherit', fontWeight: 500 }}>
+                {item.name}
+              </Typography>
+            </IconButton>
+          ))}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
-export default Navbar; 
+export default Navbar;

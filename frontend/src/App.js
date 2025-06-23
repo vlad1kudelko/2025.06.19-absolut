@@ -5,14 +5,22 @@ import Home from './pages/Home';
 import Items from './pages/Items';
 import Categories from './pages/Categories';
 import Login from './pages/Login';
-import './App.css';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 function App() {
   return (
-    <Router>
-      <div className="App">
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Router>
         <Navbar />
-        <main className="container mx-auto px-4 py-8">
+        <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 16px' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/items" element={<Items />} />
@@ -20,9 +28,9 @@ function App() {
             <Route path="/login" element={<Login />} />
           </Routes>
         </main>
-      </div>
-    </Router>
+      </Router>
+    </ThemeProvider>
   );
 }
 
-export default App; 
+export default App;
