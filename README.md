@@ -2,7 +2,7 @@
 
 ## Описание
 
-Многоуровневый проект для управления доставкой, включающий backend (Django), frontend (React), базу данных PostgreSQL и прокси-сервер Nginx. Все сервисы запускаются через Docker Compose.
+Многоуровневый проект для управления доставкой, включающий backend (Django), frontend (React), базу данных PostgreSQL и прокси-сервер Traefik. Все сервисы запускаются через Docker Compose.
 
 ---
 
@@ -74,7 +74,6 @@ make help
 
 - `backend/` — Django backend
 - `frontend/` — React frontend
-- `nginx/` — Конфигурация Nginx
 - `postgres/` — Конфигурация и инициализация PostgreSQL
 - `docker-compose.yml` — Основной файл для запуска всех сервисов
 - `Makefile` — Удобные команды для управления проектом
@@ -106,4 +105,4 @@ docker-compose run --rm django python manage.py load_reference_data
 
 ## Примечания
 - Все переменные окружения для сервисов можно изменить в файлах docker-compose.yml и Dockerfile соответствующих сервисов.
-- Для разработки можно запускать backend и frontend отдельно, используя стандартные команды Django и npm.
+- Для разработки можно запускать backend и frontend отдельно, используя стандартные команды Django и npm, но в production всё работает через Traefik и http://localhost.

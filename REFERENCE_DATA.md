@@ -74,7 +74,7 @@
 ## Административная панель
 
 Все справочники доступны для управления через Django Admin панель:
-`http://localhost:8000/admin/`
+`http://localhost/admin/`
 
 Логин: `admin`
 Пароль: `admin123`
