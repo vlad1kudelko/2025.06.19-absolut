@@ -5,7 +5,7 @@ from core.models import (
 )
 from .serializers import (
     VehicleModelSerializer, PackagingTypeSerializer, ServiceSerializer,
-    DeliveryStatusSerializer, CargoTypeSerializer
+    DeliveryStatusSerializer, CargoTypeSerializer, DeliveryTableSerializer
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -91,4 +91,16 @@ class DeliveryStatsView(APIView):
             {"date": item["delivery_date"], "count": item["count"]}
             for item in qs
         ]
+        return Response(data)
+
+
+class DeliveryTableView(APIView):
+    """API для получения таблицы доставок за последние 30 дней"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        today = timezone.now().date()
+        month_ago = today - timezone.timedelta(days=30)
+        deliveries = Delivery.objects.filter(delivery_date__gte=month_ago, is_active=True)
+        data = DeliveryTableSerializer(deliveries, many=True).data
         return Response(data) 
