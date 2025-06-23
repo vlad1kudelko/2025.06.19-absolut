@@ -12,6 +12,5 @@ router.register(r'cargo-types', views.CargoTypeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('auth/', include('rest_framework.urls')),
     path('auth/login2/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 ] 
