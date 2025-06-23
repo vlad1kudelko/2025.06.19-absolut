@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
-from core.models import VehicleModel, PackagingType, Service, DeliveryStatus, CargoType
+from core.models import VehicleModel, PackagingType, Service, DeliveryStatus, CargoType, Delivery
+from random import choice, randint
+from datetime import date, timedelta
 
 
 class Command(BaseCommand):
@@ -111,6 +113,30 @@ class Command(BaseCommand):
                 self.stdout.write(f'Создан тип груза: {cargo_type.name}')
             else:
                 self.stdout.write(f'Тип груза уже существует: {cargo_type.name}')
+
+        # Тестовые данные для Delivery
+        vehicle_models = list(VehicleModel.objects.filter(is_active=True))
+        packaging_types = list(PackagingType.objects.filter(is_active=True))
+        services = list(Service.objects.filter(is_active=True))
+        delivery_statuses = list(DeliveryStatus.objects.filter(is_active=True))
+        cargo_types = list(CargoType.objects.filter(is_active=True))
+
+        today = date.today()
+        for i in range(10):
+            delivery, created = Delivery.objects.get_or_create(
+                delivery_date=today - timedelta(days=randint(0, 30)),
+                distance=randint(10, 1000) / 10.0,
+                vehicle_model=choice(vehicle_models),
+                packaging_type=choice(packaging_types),
+                service=choice(services),
+                delivery_status=choice(delivery_statuses),
+                cargo_type=choice(cargo_types),
+                defaults={"is_active": True}
+            )
+            if created:
+                self.stdout.write(f'Создана тестовая доставка: {delivery}')
+            else:
+                self.stdout.write(f'Тестовая доставка уже существует: {delivery}')
 
         self.stdout.write(
             self.style.SUCCESS('Справочники успешно загружены!')
