@@ -76,7 +76,7 @@ const Home = () => {
 
   useEffect(() => {
     setDateError(validateDates(startDate, endDate));
-  }, [dateRange]);
+  }, [dateRange, startDate, endDate]);
 
   useEffect(() => {
     fetchStats(startDate.toISOString().slice(0, 10), endDate.toISOString().slice(0, 10));
