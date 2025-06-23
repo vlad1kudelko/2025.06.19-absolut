@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination } from '@mui/material';
+import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TextField, Button } from '@mui/material';
 import { api } from '../services/api';
 import DeliveryChart from '../components/DeliveryChart';
 
@@ -12,9 +12,21 @@ const Home = () => {
   const [tableError, setTableError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().slice(0, 10);
+  });
+  const [endDate, setEndDate] = useState(() => {
+    const d = new Date();
+    return d.toISOString().slice(0, 10);
+  });
+  const [dateError, setDateError] = useState('');
 
-  useEffect(() => {
-    api.get('/api/delivery-stats/')
+  const fetchStats = (start, end) => {
+    setLoading(true);
+    setError(null);
+    api.get(`/api/delivery-stats/?start=${start}&end=${end}`)
       .then(res => {
         setStats(res.data);
         setLoading(false);
@@ -23,10 +35,12 @@ const Home = () => {
         setError('Ошибка загрузки статистики');
         setLoading(false);
       });
-  }, []);
+  };
 
-  useEffect(() => {
-    api.get('/api/delivery-table/')
+  const fetchTable = (start, end) => {
+    setTableLoading(true);
+    setTableError(null);
+    api.get(`/api/delivery-table/?start=${start}&end=${end}`)
       .then(res => {
         setTableData(res.data);
         setTableLoading(false);
@@ -35,6 +49,31 @@ const Home = () => {
         setTableError('Ошибка загрузки таблицы');
         setTableLoading(false);
       });
+  };
+
+  const handleShow = () => {
+    fetchStats(startDate, endDate);
+    fetchTable(startDate, endDate);
+    setPage(0);
+  };
+
+  const validateDates = (start, end) => {
+    if (!start || !end) return 'Обе даты должны быть выбраны';
+    const startD = new Date(start);
+    const endD = new Date(end);
+    if (isNaN(startD) || isNaN(endD)) return 'Некорректный формат даты';
+    if (startD > endD) return 'Начальная дата не может быть позже конечной';
+    return '';
+  };
+
+  useEffect(() => {
+    setDateError(validateDates(startDate, endDate));
+  }, [startDate, endDate]);
+
+  useEffect(() => {
+    fetchStats(startDate, endDate);
+    fetchTable(startDate, endDate);
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -43,7 +82,28 @@ const Home = () => {
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Отчёт по доставкам за последние 30 дней
         </Typography>
-        {loading ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+          <TextField
+            label="Начальная дата"
+            type="date"
+            size="small"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Конечная дата"
+            type="date"
+            size="small"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
+          <Button variant="contained" onClick={handleShow} disabled={!!dateError}>Показать</Button>
+        </Box>
+        {dateError ? (
+          <Typography color="error" sx={{ mb: 2 }}>{dateError}</Typography>
+        ) : loading ? (
           <CircularProgress />
         ) : error ? (
           <Typography color="error">{error}</Typography>
@@ -53,9 +113,9 @@ const Home = () => {
       </Box>
       <Box>
         <Typography variant="h6" fontWeight="bold" gutterBottom>
-          Таблица доставок за последние 30 дней
+          Таблица доставок за выбранный период
         </Typography>
-        {tableLoading ? (
+        {dateError ? null : tableLoading ? (
           <CircularProgress />
         ) : tableError ? (
           <Typography color="error">{tableError}</Typography>
