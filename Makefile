@@ -80,4 +80,4 @@ setup: ## Первоначальная настройка проекта
 	docker-compose exec django python manage.py migrate
 	@echo "Сбор статических файлов..."
 	docker-compose exec django python manage.py collectstatic --noinput
-	@echo "Проект готов! Откройте http://localhost:80" 
+	@echo "Проект готов! Откройте http://localhost/" 

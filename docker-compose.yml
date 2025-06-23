@@ -79,7 +79,7 @@ services:
     #ports:
     #  - "3000:3000"
     environment:
-      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_API_URL=http://localhost
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - django
@@ -91,13 +91,15 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.react.rule=PathPrefix(`/`)"
       - "traefik.http.routers.react.entrypoints=web"
+      - "traefik.http.routers.react.service=react"
       - "traefik.http.routers.react.priority=1"
+      
       - "traefik.http.routers.react-static.rule=PathPrefix(`/static/`)"
       - "traefik.http.routers.react-static.entrypoints=web"
+      - "traefik.http.routers.react-static.service=react"
       - "traefik.http.routers.react-static.priority=5"
 
       - "traefik.http.services.react.loadbalancer.server.port=3000"
-
 
   traefik:
     image: traefik:v2.11

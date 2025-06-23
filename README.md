@@ -28,7 +28,7 @@
 
 3. Откройте в браузере:
    - Frontend: [http://localhost](http://localhost)
-   - Django Admin: [http://localhost:8000/admin/](http://localhost:8000/admin/)
+   - Django Admin: [http://localhost/admin/](http://localhost/admin/)
 
 ---
 
@@ -83,7 +83,7 @@ make help
 
 ## Полезные ссылки
 
-- **Django Admin:** [http://localhost:8000/admin/](http://localhost:8000/admin/)
+- **Django Admin:** [http://localhost/admin/](http://localhost/admin/)
   - Логин: `admin`
   - Пароль: `admin123`
 - **API:**
