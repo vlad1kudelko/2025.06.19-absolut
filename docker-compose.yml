@@ -10,8 +10,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
+    #ports:
+    #  - "5432:5432"
     networks:
       - absolut_network
     restart: unless-stopped
@@ -27,16 +27,47 @@ services:
       - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
     volumes:
       - ./backend:/app
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-    ports:
-      - "8000:8000"
+    #ports:
+    #  - "8000:8000"
     depends_on:
       - postgres
     networks:
       - absolut_network
     restart: unless-stopped
     command: python manage.py runserver 0.0.0.0:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.django-api.rule=PathPrefix(`/api/`)"
+      - "traefik.http.routers.django-api.entrypoints=web"
+      - "traefik.http.routers.django-api.service=django"
+      - "traefik.http.routers.django-api.priority=10"
+
+      - "traefik.http.routers.django-admin.rule=PathPrefix(`/admin/`)"
+      - "traefik.http.routers.django-admin.entrypoints=web"
+      - "traefik.http.routers.django-admin.service=django"
+      - "traefik.http.routers.django-admin.priority=10"
+
+      - "traefik.http.routers.django-docs.rule=PathPrefix(`/docs/`)"
+      - "traefik.http.routers.django-docs.entrypoints=web"
+      - "traefik.http.routers.django-docs.service=django"
+      - "traefik.http.routers.django-docs.priority=10"
+
+      - "traefik.http.routers.django-auth.rule=PathPrefix(`/api-auth/`)"
+      - "traefik.http.routers.django-auth.entrypoints=web"
+      - "traefik.http.routers.django-auth.service=django"
+      - "traefik.http.routers.django-auth.priority=10"
+
+      - "traefik.http.routers.django-static.rule=PathPrefix(`/djstatic/`)"
+      - "traefik.http.routers.django-static.entrypoints=web"
+      - "traefik.http.routers.django-static.service=django"
+      - "traefik.http.routers.django-static.priority=10"
+
+      - "traefik.http.routers.django-media.rule=PathPrefix(`/media/`)"
+      - "traefik.http.routers.django-media.entrypoints=web"
+      - "traefik.http.routers.django-media.service=django"
+      - "traefik.http.routers.django-media.priority=10"
+
+      - "traefik.http.services.django.loadbalancer.server.port=8000"
 
   # React Frontend
   react:
@@ -45,8 +76,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    ports:
-      - "3000:3000"
+    #ports:
+    #  - "3000:3000"
     environment:
       - REACT_APP_API_URL=http://localhost:8000
       - CHOKIDAR_USEPOLLING=true
@@ -56,30 +87,46 @@ services:
       - absolut_network
     restart: unless-stopped
     command: npm start
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.react.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.react.entrypoints=web"
+      - "traefik.http.routers.react.priority=1"
+      - "traefik.http.routers.react-static.rule=PathPrefix(`/static/`)"
+      - "traefik.http.routers.react-static.entrypoints=web"
+      - "traefik.http.routers.react-static.priority=5"
 
-  # Nginx Reverse Proxy
-  nginx:
-    build: ./nginx
-    container_name: absolut_nginx
+      - "traefik.http.services.react.loadbalancer.server.port=3000"
+
+
+  traefik:
+    image: traefik:v2.11
+    container_name: absolut_traefik
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      # Для HTTPS раскомментируйте строки ниже и настройте email
+      # - --entrypoints.websecure.address=:443
+      # - --certificatesresolvers.myresolver.acme.httpchallenge=true
+      # - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+      # - --certificatesresolvers.myresolver.acme.email=your-email@example.com
+      # - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
     ports:
       - "80:80"
-      - "443:443"
+      # - "443:443"
+      - "8080:8080" # Dashboard
     volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/nginx/ssl
-      - static_volume:/var/www/static
-      - media_volume:/var/www/media
-    depends_on:
-      - django
-      - react
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
     networks:
       - absolut_network
     restart: unless-stopped
 
 volumes:
   postgres_data:
-  static_volume:
-  media_volume:
+  traefik_letsencrypt:
 
 networks:
   absolut_network:
