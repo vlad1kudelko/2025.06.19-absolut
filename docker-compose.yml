@@ -86,7 +86,7 @@ services:
     networks:
       - absolut_network
     restart: unless-stopped
-    command: npm start
+    command: sh -c "npm run build && npx serve -s build -l 3000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.react.rule=PathPrefix(`/`)"
