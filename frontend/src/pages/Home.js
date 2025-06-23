@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TextField, Button } from '@mui/material';
+import React, { useEffect, useState, useRef } from 'react';
+import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Button, Popper } from '@mui/material';
 import { api } from '../services/api';
 import DeliveryChart from '../components/DeliveryChart';
+import { DateRange } from 'react-date-range';
+import ru from 'date-fns/locale/ru';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
 const Home = () => {
   const [stats, setStats] = useState([]);
@@ -12,16 +16,20 @@ const Home = () => {
   const [tableError, setTableError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [startDate, setStartDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().slice(0, 10);
-  });
-  const [endDate, setEndDate] = useState(() => {
-    const d = new Date();
-    return d.toISOString().slice(0, 10);
-  });
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: (() => { const d = new Date(); d.setDate(d.getDate() - 30); return d; })(),
+      endDate: new Date(),
+      key: 'selection',
+    },
+  ]);
+  const [showPicker, setShowPicker] = useState(false);
   const [dateError, setDateError] = useState('');
+
+  const startDate = dateRange[0].startDate;
+  const endDate = dateRange[0].endDate;
+
+  const anchorRef = useRef(null);
 
   const fetchStats = (start, end) => {
     setLoading(true);
@@ -52,8 +60,8 @@ const Home = () => {
   };
 
   const handleShow = () => {
-    fetchStats(startDate, endDate);
-    fetchTable(startDate, endDate);
+    fetchStats(startDate.toISOString().slice(0, 10), endDate.toISOString().slice(0, 10));
+    fetchTable(startDate.toISOString().slice(0, 10), endDate.toISOString().slice(0, 10));
     setPage(0);
   };
 
@@ -68,11 +76,11 @@ const Home = () => {
 
   useEffect(() => {
     setDateError(validateDates(startDate, endDate));
-  }, [startDate, endDate]);
+  }, [dateRange]);
 
   useEffect(() => {
-    fetchStats(startDate, endDate);
-    fetchTable(startDate, endDate);
+    fetchStats(startDate.toISOString().slice(0, 10), endDate.toISOString().slice(0, 10));
+    fetchTable(startDate.toISOString().slice(0, 10), endDate.toISOString().slice(0, 10));
     // eslint-disable-next-line
   }, []);
 
@@ -83,22 +91,22 @@ const Home = () => {
           Отчёт по доставкам за последние 30 дней
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-          <TextField
-            label="Начальная дата"
-            type="date"
-            size="small"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            label="Конечная дата"
-            type="date"
-            size="small"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
+          <Button variant="outlined" ref={anchorRef} onClick={() => setShowPicker(!showPicker)}>
+            {startDate && endDate ? `${startDate.toLocaleDateString()} — ${endDate.toLocaleDateString()}` : 'Выбрать диапазон дат'}
+          </Button>
+          <Popper open={showPicker} anchorEl={anchorRef.current} placement="bottom-start" style={{ zIndex: 1300 }}>
+            <Box sx={{ bgcolor: 'background.paper', boxShadow: 3, borderRadius: 2, pt: 2 }}>
+              <DateRange
+                editableDateInputs={true}
+                onChange={item => setDateRange([item.selection])}
+                moveRangeOnFirstSelection={false}
+                ranges={dateRange}
+                locale={ru}
+                maxDate={new Date()}
+              />
+              <Button variant="contained" sx={{ ml: 2 }} onClick={() => setShowPicker(false)}>ОК</Button>
+            </Box>
+          </Popper>
           <Button variant="contained" onClick={handleShow} disabled={!!dateError}>Показать</Button>
         </Box>
         {dateError ? (
