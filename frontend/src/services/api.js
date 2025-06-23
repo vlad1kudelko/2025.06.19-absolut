@@ -13,7 +13,7 @@ api.interceptors.request.use(
     // Добавляем токен авторизации если есть
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers.Authorization = `Token ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },

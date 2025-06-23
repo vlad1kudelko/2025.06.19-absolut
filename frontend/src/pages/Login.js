@@ -12,8 +12,8 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       // Отправляем данные на Django endpoint авторизации
-      const response = await api.post('/api/auth/login/', data);
-      const token = response.data.token;
+      const response = await api.post('/api/auth/login2/', data);
+      const token = response.data.access;
       localStorage.setItem('token', token);
       toast.success('Вход выполнен успешно!');
       navigate('/');

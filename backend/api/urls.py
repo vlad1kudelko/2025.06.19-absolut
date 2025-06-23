@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 router = DefaultRouter()
 router.register(r'vehicle-models', views.VehicleModelViewSet)
@@ -12,4 +13,5 @@ router.register(r'cargo-types', views.CargoTypeViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('auth/', include('rest_framework.urls')),
+    path('auth/login2/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 ] 
