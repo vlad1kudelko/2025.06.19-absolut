@@ -2,10 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Button, Popper } from '@mui/material';
 import { api } from '../services/api';
 import DeliveryChart from '../components/DeliveryChart';
-import { DateRange } from 'react-date-range';
-import ru from 'date-fns/locale/ru';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
 
 const Home = () => {
   const [stats, setStats] = useState([]);
