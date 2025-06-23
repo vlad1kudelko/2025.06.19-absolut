@@ -51,14 +51,6 @@ const Login = () => {
               Войти
             </Button>
           </Box>
-          <Box mt={4} textAlign="center">
-            <Typography variant="body2" color="text.secondary">
-              Нет аккаунта?{' '}
-              <Button variant="text" color="primary" size="small">
-                Зарегистрироваться
-              </Button>
-            </Typography>
-          </Box>
         </CardContent>
       </Card>
     </Box>
