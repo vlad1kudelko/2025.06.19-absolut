@@ -85,4 +85,34 @@ class CargoType(TimeStampedModel):
         ordering = ['name']
 
     def __str__(self):
-        return self.name 
+        return self.name
+
+
+class Delivery(TimeStampedModel):
+    """Объединяющая таблица для доставки"""
+    delivery_date = models.DateField(verbose_name='Дата доставки')
+    distance = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Дистанция (км)')
+    vehicle_model = models.ForeignKey(
+        VehicleModel, on_delete=models.PROTECT, verbose_name='Модель транспорта', related_name='deliveries'
+    )
+    packaging_type = models.ForeignKey(
+        PackagingType, on_delete=models.PROTECT, verbose_name='Тип упаковки', related_name='deliveries'
+    )
+    service = models.ForeignKey(
+        Service, on_delete=models.PROTECT, verbose_name='Услуга', related_name='deliveries'
+    )
+    delivery_status = models.ForeignKey(
+        DeliveryStatus, on_delete=models.PROTECT, verbose_name='Статус доставки', related_name='deliveries'
+    )
+    cargo_type = models.ForeignKey(
+        CargoType, on_delete=models.PROTECT, verbose_name='Тип груза', related_name='deliveries'
+    )
+    is_active = models.BooleanField(default=True, verbose_name='Активна')
+
+    class Meta:
+        verbose_name = 'Доставка'
+        verbose_name_plural = 'Доставки'
+        ordering = ['-delivery_date', 'id']
+
+    def __str__(self):
+        return f"Доставка {self.pk} от {self.delivery_date}" 

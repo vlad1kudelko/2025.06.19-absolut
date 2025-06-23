@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
-    VehicleModel, PackagingType, Service, DeliveryStatus, CargoType
+    VehicleModel, PackagingType, Service, DeliveryStatus, CargoType, Delivery
 )
 
 
@@ -96,6 +96,25 @@ class CargoTypeAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Основная информация', {
             'fields': ('name', 'description', 'is_active')
+        }),
+        ('Временные метки', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Delivery)
+class DeliveryAdmin(admin.ModelAdmin):
+    list_display = [
+        'id', 'delivery_date', 'distance', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active', 'created_at'
+    ]
+    list_filter = ['delivery_date', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active']
+    search_fields = ['id']
+    readonly_fields = ['created_at', 'updated_at']
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('delivery_date', 'distance', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active')
         }),
         ('Временные метки', {
             'fields': ('created_at', 'updated_at'),
