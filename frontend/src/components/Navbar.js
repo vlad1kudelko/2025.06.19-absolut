@@ -5,15 +5,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
-import CategoryIcon from '@mui/icons-material/Category';
-import Inventory2Icon from '@mui/icons-material/Inventory2';
 import PersonIcon from '@mui/icons-material/Person';
 import Box from '@mui/material/Box';
 
 const navItems = [
   { name: 'Главная', href: '/', icon: <HomeIcon /> },
-  { name: 'Элементы', href: '/items', icon: <Inventory2Icon /> },
-  { name: 'Категории', href: '/categories', icon: <CategoryIcon /> },
   { name: 'Войти', href: '/login', icon: <PersonIcon /> },
 ];
 
