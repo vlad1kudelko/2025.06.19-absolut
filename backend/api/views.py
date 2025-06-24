@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from django.utils import timezone
 from django.db.models import Count
 from datetime import datetime
+from rest_framework import status
+from rest_framework.exceptions import NotFound
 
 
 class VehicleModelViewSet(viewsets.ModelViewSet):
@@ -110,10 +112,18 @@ class DeliveryStatsView(APIView):
 
 
 class DeliveryTableView(APIView):
-    """API для получения таблицы доставок за выбранный период (по умолчанию 30 дней)"""
+    """API для получения таблицы доставок за выбранный период (по умолчанию 30 дней) и одной доставки по id"""
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, id=None):
+        if id is not None:
+            try:
+                delivery = Delivery.objects.get(pk=id, is_active=True)
+            except Delivery.DoesNotExist:
+                raise NotFound('Доставка не найдена')
+            data = DeliveryTableSerializer(delivery).data
+            return Response(data)
+        # старый код для списка
         start = request.query_params.get('start')
         end = request.query_params.get('end')
         today = timezone.now().date()

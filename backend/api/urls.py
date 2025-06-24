@@ -16,4 +16,5 @@ urlpatterns = [
     path('auth/login2/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('delivery-stats/', DeliveryStatsView.as_view(), name='delivery-stats'),
     path('delivery-table/', DeliveryTableView.as_view(), name='delivery-table'),
+    path('delivery-table/<int:id>/', DeliveryTableView.as_view(), name='delivery-detail'),
 ] 

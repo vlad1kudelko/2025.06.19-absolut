@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
 import 'dayjs/locale/ru';
+import { useRouter } from 'expo-router';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 dayjs.locale('ru');
@@ -104,6 +105,7 @@ export default function DeliveriesScreen() {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const router = useRouter();
 
   // Проверка токена при запуске
   useEffect(() => {
@@ -195,40 +197,45 @@ export default function DeliveriesScreen() {
           }
           const transit = formatDuration(item.transit_time);
           return (
-            <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
-              <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Доставка №{item.id}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                <MaterialCommunityIcons name="clock-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{transit}</Text>
-                <MaterialCommunityIcons name="truck" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.distance} км</Text>
+            <TouchableOpacity
+              onPress={() => router.push(`../delivery/${item.id}`)}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
+                <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Доставка №{item.id}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                  <MaterialCommunityIcons name="clock-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
+                  <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{transit}</Text>
+                  <MaterialCommunityIcons name="truck" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
+                  <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.distance} км</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                  <MaterialCommunityIcons name="package-variant" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
+                  <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.packaging_type && typeof item.packaging_type === 'object' ? item.packaging_type.name : item.packaging_type}</Text>
+                  <MaterialCommunityIcons name="truck-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
+                  <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.vehicle_model ? `${item.vehicle_model.model} (${item.vehicle_model.number})` : ''}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                  <MaterialCommunityIcons name="clipboard-list-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
+                  <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.service && typeof item.service === 'object' ? item.service.name : item.service}</Text>
+                  <MaterialCommunityIcons name="cube-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
+                  <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.cargo_type && typeof item.cargo_type === 'object' ? item.cargo_type.name : item.cargo_type}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                  <Text style={{
+                    backgroundColor: item.delivery_status_color || theme.colors.primary,
+                    color: darkenColor(item.delivery_status_color || theme.colors.primary, 50),
+                    borderRadius: 12,
+                    paddingHorizontal: 10,
+                    paddingVertical: 2,
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    overflow: 'hidden',
+                    alignSelf: 'flex-start',
+                  }}>{item.delivery_status && typeof item.delivery_status === 'object' ? item.delivery_status.name : item.delivery_status}</Text>
+                </View>
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                <MaterialCommunityIcons name="package-variant" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.packaging_type && typeof item.packaging_type === 'object' ? item.packaging_type.name : item.packaging_type}</Text>
-                <MaterialCommunityIcons name="truck-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.vehicle_model ? `${item.vehicle_model.model} (${item.vehicle_model.number})` : ''}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                <MaterialCommunityIcons name="clipboard-list-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.service && typeof item.service === 'object' ? item.service.name : item.service}</Text>
-                <MaterialCommunityIcons name="cube-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.cargo_type && typeof item.cargo_type === 'object' ? item.cargo_type.name : item.cargo_type}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                <Text style={{
-                  backgroundColor: item.delivery_status_color || theme.colors.primary,
-                  color: darkenColor(item.delivery_status_color || theme.colors.primary, 50),
-                  borderRadius: 12,
-                  paddingHorizontal: 10,
-                  paddingVertical: 2,
-                  fontSize: 14,
-                  fontWeight: 'bold',
-                  overflow: 'hidden',
-                  alignSelf: 'flex-start',
-                }}>{item.delivery_status && typeof item.delivery_status === 'object' ? item.delivery_status.name : item.delivery_status}</Text>
-              </View>
-            </View>
+            </TouchableOpacity>
           );
         }}
         contentContainerStyle={styles.list}
