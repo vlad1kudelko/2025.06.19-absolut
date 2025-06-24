@@ -13,6 +13,7 @@ dayjs.extend(relativeTime);
 dayjs.locale('ru');
 
 type Delivery = {
+  id: number;
   delivery_date: string;
   vehicle_model: string;
   service: string;
@@ -182,7 +183,7 @@ export default function DeliveriesScreen() {
           else timeAgo += ' назад';
           return (
             <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
-              <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Модель: {item.vehicle_model}</Text>
+              <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Доставка №{item.id}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <MaterialCommunityIcons name="clock-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
                 <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{timeAgo}</Text>
@@ -192,10 +193,13 @@ export default function DeliveriesScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <MaterialCommunityIcons name="package-variant" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
                 <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.packaging_type}</Text>
-                <MaterialCommunityIcons name="map-marker-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
+                <MaterialCommunityIcons name="truck-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
                 <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.vehicle_model}</Text>
               </View>
-              <Text variant="bodySmall" style={[styles.package, { color: theme.colors.onBackground }]}>Услуга: {item.service}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                <MaterialCommunityIcons name="clipboard-list-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.service}</Text>
+              </View>
             </View>
           );
         }}
