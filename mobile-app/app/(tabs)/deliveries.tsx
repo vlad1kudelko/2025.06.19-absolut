@@ -28,13 +28,11 @@ const deliveries = [
 function DeliveryItem({ item }: { item: typeof deliveries[0] }) {
   const theme = useTheme();
   return (
-    <Card style={[styles.card, { backgroundColor: theme.colors.elevation.level2 }]}> 
-      <Card.Content>
-        <Text variant="titleMedium">№ {item.id}</Text>
-        <Text variant="bodyMedium" style={styles.info}>{item.time} · {item.distance} · {item.cargoType}</Text>
-        <Text variant="bodySmall" style={styles.package}>{item.packageType}</Text>
-      </Card.Content>
-    </Card>
+    <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
+      <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>№ {item.id}</Text>
+      <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.time} · {item.distance} · {item.cargoType}</Text>
+      <Text variant="bodySmall" style={[styles.package, { color: theme.colors.onBackground }]}>{item.packageType}</Text>
+    </View>
   );
 }
 
@@ -65,8 +63,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    marginBottom: 12,
-    borderRadius: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderRadius: 0,
+    marginBottom: 0,
   },
   info: {
     marginTop: 4,
@@ -74,6 +74,5 @@ const styles = StyleSheet.create({
   },
   package: {
     fontStyle: 'italic',
-    color: '#aaa',
   },
 }); 
