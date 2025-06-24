@@ -84,26 +84,11 @@
 
 ## Полезные команды Makefile
 
-- `make up` — Запустить все сервисы в фоне
-- `make down` — Остановить все сервисы
-- `make logs` — Просмотреть логи всех сервисов
-- `make clean` — Остановить и удалить все контейнеры и volumes
+- `make setup` — Первоначальная настройка и запуск всех сервисов
 - `make migrate` — Применить миграции Django
+- `make makemigrations` — Создать миграции Django
 - `make createsuperuser` — Создать суперпользователя Django
-- `make collectstatic` — Собрать статику Django
-- `make shell-django` — Открыть Django shell
-- `make shell-react` — Открыть shell в контейнере React
-- `make install-deps` — Установить зависимости React
-- `make build-react` — Собрать React для продакшена
-- `make test-django` — Запустить тесты Django
-- `make test-react` — Запустить тесты React
-- `make status` — Показать статус контейнеров
-- `make restart` — Перезапустить все сервисы
-
-Полный список команд:
-```bash
-make help
-```
+- `make help` — Показать справку по доступным командам
 
 ---
 
