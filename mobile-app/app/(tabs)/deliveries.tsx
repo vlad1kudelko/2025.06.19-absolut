@@ -1,5 +1,5 @@
 import { View, FlatList, StyleSheet } from 'react-native';
-import { Card, Text, useTheme, Appbar, IconButton } from 'react-native-paper';
+import { Card, Text, useTheme, Appbar, IconButton, Button } from 'react-native-paper';
 
 const deliveries = [
   {
@@ -45,6 +45,10 @@ export default function DeliveriesScreen() {
         <IconButton icon="filter-variant" onPress={() => {}} accessibilityLabel="Фильтр" size={24} iconColor={theme.colors.onBackground} />
         <IconButton icon="magnify" onPress={() => {}} accessibilityLabel="Поиск" size={24} iconColor={theme.colors.onBackground} />
       </Appbar.Header>
+      <View style={styles.filters}>
+        <Button mode="outlined" style={styles.filterBtn} labelStyle={{ color: theme.colors.onBackground }} onPress={() => {}}>Все время пути</Button>
+        <Button mode="outlined" style={styles.filterBtn} labelStyle={{ color: theme.colors.onBackground }} onPress={() => {}}>Все дистанции</Button>
+      </View>
       <FlatList
         data={deliveries}
         keyExtractor={item => item.id}
@@ -60,7 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    padding: 16,
+    paddingHorizontal: 16,
   },
   card: {
     paddingVertical: 16,
@@ -74,5 +78,15 @@ const styles = StyleSheet.create({
   },
   package: {
     fontStyle: 'italic',
+  },
+  filters: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  filterBtn: {
+    flex: 1,
   },
 }); 
