@@ -1,7 +1,8 @@
-import { View, FlatList, StyleSheet } from 'react-native';
-import { Card, Text, useTheme, Appbar, IconButton } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { Card, Text, useTheme, Appbar, IconButton, Button } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity } from 'react-native';
 
 type Delivery = {
@@ -11,21 +12,98 @@ type Delivery = {
   distance: number;
 };
 
+function LoginScreen({ onLogin }: { onLogin: (token: string) => void }) {
+  const theme = useTheme();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('http://192.168.0.9/api/auth/login2/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      if (!res.ok) throw new Error('Ошибка авторизации');
+      const data = await res.json();
+      if (!data.access) throw new Error('Нет токена');
+      await AsyncStorage.setItem('jwt', data.access);
+      onLogin(data.access);
+    } catch (e: any) {
+      setError(e.message || 'Ошибка');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'center', padding: 24, backgroundColor: theme.colors.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <Text style={{ color: theme.colors.onBackground, fontSize: 24, marginBottom: 24, textAlign: 'center' }}>Вход</Text>
+      <TextInput
+        placeholder="Логин"
+        value={username}
+        onChangeText={setUsername}
+        style={{ backgroundColor: theme.colors.elevation.level1, color: theme.colors.onBackground, borderRadius: 8, marginBottom: 12, padding: 12 }}
+        placeholderTextColor={theme.colors.onBackground}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Пароль"
+        value={password}
+        onChangeText={setPassword}
+        style={{ backgroundColor: theme.colors.elevation.level1, color: theme.colors.onBackground, borderRadius: 8, marginBottom: 12, padding: 12 }}
+        placeholderTextColor={theme.colors.onBackground}
+        secureTextEntry
+      />
+      {error && <Text style={{ color: 'red', marginBottom: 12, textAlign: 'center' }}>{error}</Text>}
+      <Button mode="contained" onPress={handleLogin} loading={loading} disabled={loading} style={{ marginTop: 8 }}>
+        Войти
+      </Button>
+    </KeyboardAvoidingView>
+  );
+}
+
 export default function DeliveriesScreen() {
   const theme = useTheme();
   const [filter, setFilter] = useState('time');
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
+  // Проверка токена при запуске
   useEffect(() => {
+    (async () => {
+      const t = await AsyncStorage.getItem('jwt');
+      if (!t) {
+        setAuthChecked(true);
+        return;
+      }
+      // Проверяем токен (например, делаем тестовый запрос)
+      fetch('http://192.168.0.9/api/delivery-table/', {
+        headers: { 'Authorization': `Bearer ${t}` },
+      })
+        .then(res => {
+          if (res.status === 401) throw new Error('bad');
+          setToken(t);
+        })
+        .catch(() => setToken(null))
+        .finally(() => setAuthChecked(true));
+    })();
+  }, []);
+
+  // Загрузка доставок
+  useEffect(() => {
+    if (!token) return;
     setLoading(true);
     setError(null);
     fetch('http://192.168.0.9/api/delivery-table/', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${token}` },
     })
       .then(res => {
         if (!res.ok) throw new Error('Ошибка загрузки');
@@ -34,7 +112,10 @@ export default function DeliveriesScreen() {
       .then(setDeliveries)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
+
+  if (!authChecked) return null;
+  if (!token) return <LoginScreen onLogin={setToken} />;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
