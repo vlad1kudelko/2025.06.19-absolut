@@ -97,13 +97,13 @@ class DeliveryStatsView(APIView):
         else:
             start_date = end_date - timezone.timedelta(days=30)
         qs = (
-            Delivery.objects.filter(delivery_date__gte=start_date, delivery_date__lte=end_date, is_active=True)
-            .values('delivery_date')
+            Delivery.objects.filter(departure_datetime__date__gte=start_date, departure_datetime__date__lte=end_date, is_active=True)
+            .values('departure_datetime')
             .annotate(count=Count('id'))
-            .order_by('delivery_date')
+            .order_by('departure_datetime')
         )
         data = [
-            {"date": item["delivery_date"], "count": item["count"]}
+            {"date": item["departure_datetime"].date() if hasattr(item["departure_datetime"], 'date') else item["departure_datetime"], "count": item["count"]}
             for item in qs
         ]
         return Response(data)
@@ -131,6 +131,6 @@ class DeliveryTableView(APIView):
                 start_date = end_date - timezone.timedelta(days=30)
         else:
             start_date = end_date - timezone.timedelta(days=30)
-        deliveries = Delivery.objects.filter(delivery_date__gte=start_date, delivery_date__lte=end_date, is_active=True)
+        deliveries = Delivery.objects.filter(departure_datetime__date__gte=start_date, departure_datetime__date__lte=end_date, is_active=True)
         data = DeliveryTableSerializer(deliveries, many=True).data
         return Response(data) 

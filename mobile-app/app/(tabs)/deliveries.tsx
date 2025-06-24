@@ -14,7 +14,9 @@ dayjs.locale('ru');
 
 type Delivery = {
   id: number;
-  delivery_date: string;
+  departure_datetime: string;
+  arrival_datetime: string;
+  transit_time: string;
   vehicle_model: { model: string; number: string };
   service: string | { id: number; name: string };
   distance: number;
@@ -177,7 +179,7 @@ export default function DeliveriesScreen() {
         data={deliveries}
         keyExtractor={(_, idx) => String(idx)}
         renderItem={({ item }) => {
-          const dateStr = item.created_at || item.delivery_date;
+          const dateStr = item.departure_datetime || item.created_at;
           const now = dayjs();
           const created = dayjs(dateStr);
           const diffDays = now.diff(created, 'day');

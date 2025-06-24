@@ -135,7 +135,9 @@ const Home = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Дата доставки</TableCell>
+                    <TableCell>Дата и время отправки</TableCell>
+                    <TableCell>Дата и время доставки</TableCell>
+                    <TableCell>Время в пути</TableCell>
                     <TableCell>Модель ТС</TableCell>
                     <TableCell>Услуга</TableCell>
                     <TableCell>Дистанция (км)</TableCell>
@@ -144,7 +146,9 @@ const Home = () => {
                 <TableBody>
                   {tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, idx) => (
                     <TableRow key={idx + page * rowsPerPage}>
-                      <TableCell>{row.delivery_date}</TableCell>
+                      <TableCell>{row.departure_datetime ? new Date(row.departure_datetime).toLocaleString() : ''}</TableCell>
+                      <TableCell>{row.arrival_datetime ? new Date(row.arrival_datetime).toLocaleString() : ''}</TableCell>
+                      <TableCell>{row.transit_time ? row.transit_time : ''}</TableCell>
                       <TableCell>{row.vehicle_model ? `${row.vehicle_model.model} (${row.vehicle_model.number})` : ''}</TableCell>
                       <TableCell>{row.service && row.service.name ? row.service.name : row.service}</TableCell>
                       <TableCell>{row.distance}</TableCell>

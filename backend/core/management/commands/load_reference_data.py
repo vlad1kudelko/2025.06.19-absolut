@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from core.models import VehicleModel, PackagingType, Service, DeliveryStatus, CargoType, Delivery
 from random import choice, randint
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 
 class Command(BaseCommand):
@@ -110,10 +110,17 @@ class Command(BaseCommand):
         delivery_statuses = list(DeliveryStatus.objects.filter(is_active=True))
         cargo_types = list(CargoType.objects.filter(is_active=True))
 
-        today = date.today()
+        today = datetime.now()
         for i in range(10):
+            departure_datetime = today - timedelta(days=randint(0, 30), hours=randint(0, 23), minutes=randint(0, 59))
+            transit_hours = randint(1, 48)
+            transit_minutes = randint(0, 59)
+            transit_time = timedelta(hours=transit_hours, minutes=transit_minutes)
+            arrival_datetime = departure_datetime + transit_time
             delivery, created = Delivery.objects.get_or_create(
-                delivery_date=today - timedelta(days=randint(0, 30)),
+                departure_datetime=departure_datetime,
+                arrival_datetime=arrival_datetime,
+                transit_time=transit_time,
                 distance=randint(10, 1000) / 10.0,
                 vehicle_model=choice(vehicle_models),
                 packaging_type=choice(packaging_types),

@@ -91,7 +91,10 @@ class CargoType(TimeStampedModel):
 
 class Delivery(TimeStampedModel):
     """Объединяющая таблица для доставки"""
-    delivery_date = models.DateField(verbose_name='Дата доставки')
+    # delivery_date = models.DateField(verbose_name='Дата доставки')
+    departure_datetime = models.DateTimeField(verbose_name='Дата и время отправки')
+    arrival_datetime = models.DateTimeField(verbose_name='Дата и время доставки')
+    transit_time = models.DurationField(verbose_name='Время в пути')
     distance = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Дистанция (км)')
     vehicle_model = models.ForeignKey(
         VehicleModel, on_delete=models.PROTECT, verbose_name='Модель транспорта (модель/номер)', related_name='deliveries'
@@ -113,7 +116,7 @@ class Delivery(TimeStampedModel):
     class Meta:
         verbose_name = 'Доставка'
         verbose_name_plural = 'Доставки'
-        ordering = ['-delivery_date', 'id']
+        ordering = ['-departure_datetime', 'id']
 
     def __str__(self):
-        return f"Доставка {self.pk} от {self.delivery_date}" 
+        return f"Доставка {self.pk} от {self.departure_datetime}" 
