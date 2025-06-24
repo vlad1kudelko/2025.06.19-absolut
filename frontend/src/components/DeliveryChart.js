@@ -21,14 +21,30 @@ ChartJS.register(
   Legend
 );
 
+const aggregateByDate = (data) => {
+  // Агрегируем count по датам
+  const map = new Map();
+  data.forEach(item => {
+    if (map.has(item.date)) {
+      map.set(item.date, map.get(item.date) + item.count);
+    } else {
+      map.set(item.date, item.count);
+    }
+  });
+  // Сортируем по дате
+  return Array.from(map.entries())
+    .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+    .map(([date, count]) => ({ date, count }));
+};
+
 const DeliveryChart = ({ data }) => {
-  // data: [{ date: '2024-06-01', count: 5 }, ...]
+  const aggregated = aggregateByDate(data);
   const chartData = {
-    labels: data.map((item) => item.date),
+    labels: aggregated.map((item) => item.date),
     datasets: [
       {
         label: 'Количество доставок',
-        data: data.map((item) => item.count),
+        data: aggregated.map((item) => item.count),
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1,

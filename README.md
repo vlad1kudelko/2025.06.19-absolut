@@ -1,5 +1,16 @@
 # Система доставки Absolut
 
+<p align="center">
+  <img src="screenshots/1-db.png" alt="База данных" width="320" style="margin:8px;"/>
+  <img src="screenshots/2-frontend-login.png" alt="Вход в веб" width="320" style="margin:8px;"/>
+  <img src="screenshots/3-frontend.png" alt="Веб-интерфейс" width="320" style="margin:8px;"/>
+  <img src="screenshots/4-mobile-login.jpg" alt="Мобильный логин" width="180" style="margin:8px;"/>
+  <img src="screenshots/5-mobile-list.jpg" alt="Список доставок" width="180" style="margin:8px;"/>
+  <img src="screenshots/6-mobile-item.jpg" alt="Детали доставки - в ожидании" width="180" style="margin:8px;"/>
+  <img src="screenshots/7-mobile-item.jpg" alt="Детали доставки - доставлен" width="180" style="margin:8px;"/>
+  <img src="screenshots/8-mobile-map.jpg" alt="Карта" width="180" style="margin:8px;"/>
+</p>
+
 ## Описание
 
 **Absolut** — комплексная система для управления доставкой, включающая:
