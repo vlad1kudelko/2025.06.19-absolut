@@ -145,8 +145,8 @@ const Home = () => {
                   {tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, idx) => (
                     <TableRow key={idx + page * rowsPerPage}>
                       <TableCell>{row.delivery_date}</TableCell>
-                      <TableCell>{row.vehicle_model}</TableCell>
-                      <TableCell>{row.service}</TableCell>
+                      <TableCell>{row.vehicle_model ? `${row.vehicle_model.model} (${row.vehicle_model.number})` : ''}</TableCell>
+                      <TableCell>{row.service && row.service.name ? row.service.name : row.service}</TableCell>
                       <TableCell>{row.distance}</TableCell>
                     </TableRow>
                   ))}

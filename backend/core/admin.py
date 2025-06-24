@@ -7,14 +7,14 @@ from .models import (
 
 @admin.register(VehicleModel)
 class VehicleModelAdmin(admin.ModelAdmin):
-    list_display = ['name', 'is_active', 'created_at']
+    list_display = ['model', 'number', 'is_active', 'created_at']
     list_filter = ['is_active', 'created_at']
-    search_fields = ['name', 'description']
+    search_fields = ['model', 'number', 'description']
     readonly_fields = ['created_at', 'updated_at']
     
     fieldsets = (
         ('Основная информация', {
-            'fields': ('name', 'description', 'is_active')
+            'fields': ('model', 'number', 'description', 'is_active')
         }),
         ('Временные метки', {
             'fields': ('created_at', 'updated_at'),

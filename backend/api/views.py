@@ -21,9 +21,9 @@ class VehicleModelViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['is_active']
-    search_fields = ['name', 'description']
-    ordering_fields = ['name', 'created_at']
-    ordering = ['name']
+    search_fields = ['model', 'number', 'description']
+    ordering_fields = ['model', 'number', 'created_at']
+    ordering = ['model', 'number']
 
 
 class PackagingTypeViewSet(viewsets.ModelViewSet):

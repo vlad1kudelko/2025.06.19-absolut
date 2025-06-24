@@ -13,17 +13,18 @@ class TimeStampedModel(models.Model):
 
 class VehicleModel(TimeStampedModel):
     """Модель транспорта"""
-    name = models.CharField(max_length=100, verbose_name='Название модели')
+    model = models.CharField(max_length=100, verbose_name='Модель')
+    number = models.CharField(max_length=100, verbose_name='Номер')
     description = models.TextField(blank=True, verbose_name='Описание')
     is_active = models.BooleanField(default=True, verbose_name='Активна')
     
     class Meta:
         verbose_name = 'Модель транспорта'
         verbose_name_plural = 'Модели транспорта'
-        ordering = ['name']
+        ordering = ['model', 'number']
 
     def __str__(self):
-        return self.name
+        return f"{self.model} ({self.number})"
 
 
 class PackagingType(TimeStampedModel):
@@ -93,7 +94,7 @@ class Delivery(TimeStampedModel):
     delivery_date = models.DateField(verbose_name='Дата доставки')
     distance = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Дистанция (км)')
     vehicle_model = models.ForeignKey(
-        VehicleModel, on_delete=models.PROTECT, verbose_name='Модель транспорта', related_name='deliveries'
+        VehicleModel, on_delete=models.PROTECT, verbose_name='Модель транспорта (модель/номер)', related_name='deliveries'
     )
     packaging_type = models.ForeignKey(
         PackagingType, on_delete=models.PROTECT, verbose_name='Тип упаковки', related_name='deliveries'

@@ -9,7 +9,7 @@ class VehicleModelSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = VehicleModel
-        fields = ['id', 'name', 'description', 'is_active', 'created_at', 'updated_at']
+        fields = ['id', 'model', 'number', 'description', 'is_active', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
@@ -50,12 +50,26 @@ class CargoTypeSerializer(serializers.ModelSerializer):
 
 
 class DeliveryTableSerializer(serializers.ModelSerializer):
-    vehicle_model = serializers.CharField(source='vehicle_model.name')
-    service = serializers.CharField(source='service.name')
-    packaging_type = serializers.CharField(source='packaging_type.name')
-    delivery_status = serializers.CharField(source='delivery_status.name')
+    vehicle_model = serializers.SerializerMethodField()
+    service = serializers.SerializerMethodField()
+    packaging_type = serializers.SerializerMethodField()
+    delivery_status = serializers.SerializerMethodField()
     delivery_status_color = serializers.CharField(source='delivery_status.color')
-    cargo_type = serializers.CharField(source='cargo_type.name')
+    cargo_type = serializers.SerializerMethodField()
+
+    def get_vehicle_model(self, obj):
+        return {
+            'model': obj.vehicle_model.model,
+            'number': obj.vehicle_model.number
+        }
+    def get_service(self, obj):
+        return {'id': obj.service.id, 'name': obj.service.name}
+    def get_packaging_type(self, obj):
+        return {'id': obj.packaging_type.id, 'name': obj.packaging_type.name}
+    def get_delivery_status(self, obj):
+        return {'id': obj.delivery_status.id, 'name': obj.delivery_status.name}
+    def get_cargo_type(self, obj):
+        return {'id': obj.cargo_type.id, 'name': obj.cargo_type.name}
 
     class Meta:
         model = Delivery
