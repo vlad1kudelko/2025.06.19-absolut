@@ -55,4 +55,4 @@ class DeliveryTableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Delivery
-        fields = ['delivery_date', 'vehicle_model', 'service', 'distance'] 
+        fields = ['delivery_date', 'vehicle_model', 'service', 'distance', 'created_at'] 

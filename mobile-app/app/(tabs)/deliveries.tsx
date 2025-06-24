@@ -4,12 +4,20 @@ import { Card, Text, useTheme, Appbar, IconButton, Button } from 'react-native-p
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity } from 'react-native';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import duration from 'dayjs/plugin/duration';
+import 'dayjs/locale/ru';
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
+dayjs.locale('ru');
 
 type Delivery = {
   delivery_date: string;
   vehicle_model: string;
   service: string;
   distance: number;
+  created_at?: string;
 };
 
 function LoginScreen({ onLogin }: { onLogin: (token: string) => void }) {
@@ -149,13 +157,39 @@ export default function DeliveriesScreen() {
       <FlatList
         data={deliveries}
         keyExtractor={(_, idx) => String(idx)}
-        renderItem={({ item }) => (
-          <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
-            <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Модель: {item.vehicle_model}</Text>
-            <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>Дата: {item.delivery_date} · {item.distance} км</Text>
-            <Text variant="bodySmall" style={[styles.package, { color: theme.colors.onBackground }]}>Услуга: {item.service}</Text>
-          </View>
-        )}
+        renderItem={({ item }) => {
+          const dateStr = item.created_at || item.delivery_date;
+          const now = dayjs();
+          const created = dayjs(dateStr);
+          const diffDays = now.diff(created, 'day');
+          const totalHours = now.diff(created, 'hour');
+          const diffHours = totalHours - diffDays * 24;
+          function plural(num: number, one: string, few: string, many: string) {
+            if (num % 10 === 1 && num % 100 !== 11) return one;
+            if ([2,3,4].includes(num % 10) && ![12,13,14].includes(num % 100)) return few;
+            return many;
+          }
+          let timeAgo = '';
+          if (diffDays > 0) {
+            timeAgo += `${diffDays} ${plural(diffDays, 'день', 'дня', 'дней')}`;
+          }
+          if (diffHours > 0) {
+            if (timeAgo) timeAgo += ' ';
+            timeAgo += `${diffHours} ${plural(diffHours, 'час', 'часа', 'часов')}`;
+          }
+          if (!timeAgo) timeAgo = 'только что';
+          else timeAgo += ' назад';
+          return (
+            <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
+              <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Модель: {item.vehicle_model}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                <MaterialCommunityIcons name="clock-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}> {timeAgo} · {item.distance} км</Text>
+              </View>
+              <Text variant="bodySmall" style={[styles.package, { color: theme.colors.onBackground }]}>Услуга: {item.service}</Text>
+            </View>
+          );
+        }}
         contentContainerStyle={styles.list}
       />
     </View>
