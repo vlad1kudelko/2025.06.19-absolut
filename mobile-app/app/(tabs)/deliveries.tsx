@@ -22,6 +22,7 @@ type Delivery = {
   packaging_type: string;
   delivery_status: string;
   delivery_status_color?: string;
+  cargo_type?: string;
 };
 
 function LoginScreen({ onLogin }: { onLogin: (token: string) => void }) {
@@ -215,6 +216,8 @@ export default function DeliveriesScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <MaterialCommunityIcons name="clipboard-list-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
                 <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.service}</Text>
+                <MaterialCommunityIcons name="cube-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.cargo_type}</Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <Text style={{
