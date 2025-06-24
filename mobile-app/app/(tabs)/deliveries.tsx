@@ -1,47 +1,41 @@
 import { View, FlatList, StyleSheet } from 'react-native';
 import { Card, Text, useTheme, Appbar, IconButton } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 
-const deliveries = [
-  {
-    id: '001',
-    time: '12:30',
-    distance: '15 км',
-    cargoType: 'Документы',
-    packageType: 'Конверт',
-  },
-  {
-    id: '002',
-    time: '14:00',
-    distance: '8 км',
-    cargoType: 'Электроника',
-    packageType: 'Коробка',
-  },
-  {
-    id: '003',
-    time: '16:15',
-    distance: '22 км',
-    cargoType: 'Одежда',
-    packageType: 'Пакет',
-  },
-];
-
-function DeliveryItem({ item }: { item: typeof deliveries[0] }) {
-  const theme = useTheme();
-  return (
-    <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
-      <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>№ {item.id}</Text>
-      <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.time} · {item.distance} · {item.cargoType}</Text>
-      <Text variant="bodySmall" style={[styles.package, { color: theme.colors.onBackground }]}>{item.packageType}</Text>
-    </View>
-  );
-}
+type Delivery = {
+  delivery_date: string;
+  vehicle_model: string;
+  service: string;
+  distance: number;
+};
 
 export default function DeliveriesScreen() {
   const theme = useTheme();
   const [filter, setFilter] = useState('time');
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetch('http://192.168.0.9/api/delivery-table/', {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+      },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Ошибка загрузки');
+        return res.json();
+      })
+      .then(setDeliveries)
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
       <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 0, shadowOpacity: 0 }}>
@@ -69,10 +63,18 @@ export default function DeliveriesScreen() {
           <MaterialCommunityIcons name="menu-down" size={20} color={theme.colors.onBackground} />
         </TouchableOpacity>
       </View>
+      {loading && <Text style={{ color: theme.colors.onBackground, textAlign: 'center', marginTop: 16 }}>Загрузка...</Text>}
+      {error && <Text style={{ color: 'red', textAlign: 'center', marginTop: 16 }}>{error}</Text>}
       <FlatList
         data={deliveries}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <DeliveryItem item={item} />}
+        keyExtractor={(_, idx) => String(idx)}
+        renderItem={({ item }) => (
+          <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
+            <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Модель: {item.vehicle_model}</Text>
+            <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>Дата: {item.delivery_date} · {item.distance} км</Text>
+            <Text variant="bodySmall" style={[styles.package, { color: theme.colors.onBackground }]}>Услуга: {item.service}</Text>
+          </View>
+        )}
         contentContainerStyle={styles.list}
       />
     </View>
