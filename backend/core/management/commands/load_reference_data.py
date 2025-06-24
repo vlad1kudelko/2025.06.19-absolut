@@ -117,12 +117,12 @@ class Command(BaseCommand):
             transit_minutes = randint(0, 59)
             transit_time = timedelta(hours=transit_hours, minutes=transit_minutes)
             arrival_datetime = departure_datetime + transit_time
-            from_lat = 55 + randint(-50000, 50000) / 1000000  # Примерно Москва ±5 градусов
-            from_lon = 37 + randint(-50000, 50000) / 1000000
-            to_lat = 59 + randint(-50000, 50000) / 1000000   # Примерно СПб ±5 градусов
-            to_lon = 30 + randint(-50000, 50000) / 1000000
-            from_coords = f"{from_lat:.6f},{from_lon:.6f}"
-            to_coords = f"{to_lat:.6f},{to_lon:.6f}"
+            from_lat = 55.55 + randint(0, 40000) / 100000.0  # 55.55000 - 55.95000
+            from_lon = 37.35 + randint(0, 50000) / 100000.0  # 37.35000 - 37.85000
+            to_lat = 55.55 + randint(0, 40000) / 100000.0
+            to_lon = 37.35 + randint(0, 50000) / 100000.0
+            from_coords = f"{from_lat:.5f},{from_lon:.5f}"
+            to_coords = f"{to_lat:.5f},{to_lon:.5f}"
             delivery, created = Delivery.objects.get_or_create(
                 departure_datetime=departure_datetime,
                 arrival_datetime=arrival_datetime,
