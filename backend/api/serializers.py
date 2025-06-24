@@ -53,7 +53,9 @@ class DeliveryTableSerializer(serializers.ModelSerializer):
     vehicle_model = serializers.CharField(source='vehicle_model.name')
     service = serializers.CharField(source='service.name')
     packaging_type = serializers.CharField(source='packaging_type.name')
+    delivery_status = serializers.CharField(source='delivery_status.name')
+    delivery_status_color = serializers.CharField(source='delivery_status.color')
 
     class Meta:
         model = Delivery
-        fields = ['id', 'delivery_date', 'vehicle_model', 'service', 'distance', 'created_at', 'packaging_type'] 
+        fields = ['id', 'delivery_date', 'vehicle_model', 'service', 'distance', 'created_at', 'packaging_type', 'delivery_status', 'delivery_status_color'] 

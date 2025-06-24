@@ -20,6 +20,8 @@ type Delivery = {
   distance: number;
   created_at?: string;
   packaging_type: string;
+  delivery_status: string;
+  delivery_status_color?: string;
 };
 
 function LoginScreen({ onLogin }: { onLogin: (token: string) => void }) {
@@ -75,6 +77,20 @@ function LoginScreen({ onLogin }: { onLogin: (token: string) => void }) {
       </Button>
     </KeyboardAvoidingView>
   );
+}
+
+// Функция для затемнения цвета (hex) на заданный процент
+function darkenColor(hex: string, percent: number) {
+  let c = hex.replace('#', '');
+  if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  const num = parseInt(c, 16);
+  let r = (num >> 16) - Math.round(2.55 * percent);
+  let g = ((num >> 8) & 0x00FF) - Math.round(2.55 * percent);
+  let b = (num & 0x0000FF) - Math.round(2.55 * percent);
+  r = Math.max(0, r);
+  g = Math.max(0, g);
+  b = Math.max(0, b);
+  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
 }
 
 export default function DeliveriesScreen() {
@@ -199,6 +215,19 @@ export default function DeliveriesScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <MaterialCommunityIcons name="clipboard-list-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
                 <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.service}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                <Text style={{
+                  backgroundColor: item.delivery_status_color || theme.colors.primary,
+                  color: darkenColor(item.delivery_status_color || theme.colors.primary, 50),
+                  borderRadius: 12,
+                  paddingHorizontal: 10,
+                  paddingVertical: 2,
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  overflow: 'hidden',
+                  alignSelf: 'flex-start',
+                }}>{item.delivery_status}</Text>
               </View>
             </View>
           );
