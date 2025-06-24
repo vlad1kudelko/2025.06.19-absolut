@@ -18,6 +18,7 @@ type Delivery = {
   service: string;
   distance: number;
   created_at?: string;
+  packaging_type: string;
 };
 
 function LoginScreen({ onLogin }: { onLogin: (token: string) => void }) {
@@ -184,7 +185,15 @@ export default function DeliveriesScreen() {
               <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Модель: {item.vehicle_model}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <MaterialCommunityIcons name="clock-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}> {timeAgo} · {item.distance} км</Text>
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{timeAgo}</Text>
+                <MaterialCommunityIcons name="truck" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.distance} км</Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                <MaterialCommunityIcons name="package-variant" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.packaging_type}</Text>
+                <MaterialCommunityIcons name="map-marker-outline" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.vehicle_model}</Text>
               </View>
               <Text variant="bodySmall" style={[styles.package, { color: theme.colors.onBackground }]}>Услуга: {item.service}</Text>
             </View>
