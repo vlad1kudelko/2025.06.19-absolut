@@ -112,6 +112,8 @@ class Delivery(TimeStampedModel):
         CargoType, on_delete=models.PROTECT, verbose_name='Тип груза', related_name='deliveries'
     )
     is_active = models.BooleanField(default=True, verbose_name='Активна')
+    from_coords = models.CharField(max_length=64, blank=True, verbose_name='Координаты отправления (lat,lon)')
+    to_coords = models.CharField(max_length=64, blank=True, verbose_name='Координаты назначения (lat,lon)')
 
     class Meta:
         verbose_name = 'Доставка'

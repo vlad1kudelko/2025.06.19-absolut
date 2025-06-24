@@ -107,14 +107,14 @@ class CargoTypeAdmin(admin.ModelAdmin):
 @admin.register(Delivery)
 class DeliveryAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'departure_datetime', 'arrival_datetime', 'transit_time', 'distance', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active', 'created_at'
+        'id', 'departure_datetime', 'arrival_datetime', 'transit_time', 'distance', 'from_coords', 'to_coords', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active', 'created_at'
     ]
     list_filter = ['departure_datetime', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active']
-    search_fields = ['id']
+    search_fields = ['id', 'from_coords', 'to_coords']
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Основная информация', {
-            'fields': ('departure_datetime', 'arrival_datetime', 'transit_time', 'distance', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active')
+            'fields': ('departure_datetime', 'arrival_datetime', 'transit_time', 'distance', 'from_coords', 'to_coords', 'vehicle_model', 'packaging_type', 'service', 'delivery_status', 'cargo_type', 'is_active')
         }),
         ('Временные метки', {
             'fields': ('created_at', 'updated_at'),
