@@ -1,5 +1,8 @@
 import { View, FlatList, StyleSheet } from 'react-native';
-import { Card, Text, useTheme, Appbar, IconButton, Button } from 'react-native-paper';
+import { Card, Text, useTheme, Appbar, IconButton } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 
 const deliveries = [
   {
@@ -38,6 +41,7 @@ function DeliveryItem({ item }: { item: typeof deliveries[0] }) {
 
 export default function DeliveriesScreen() {
   const theme = useTheme();
+  const [filter, setFilter] = useState('time');
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
       <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 0, shadowOpacity: 0 }}>
@@ -46,8 +50,24 @@ export default function DeliveriesScreen() {
         <IconButton icon="magnify" onPress={() => {}} accessibilityLabel="Поиск" size={24} iconColor={theme.colors.onBackground} />
       </Appbar.Header>
       <View style={styles.filters}>
-        <Button mode="outlined" style={styles.filterBtn} labelStyle={{ color: theme.colors.onBackground }} onPress={() => {}}>Все время пути</Button>
-        <Button mode="outlined" style={styles.filterBtn} labelStyle={{ color: theme.colors.onBackground }} onPress={() => {}}>Все дистанции</Button>
+        <TouchableOpacity
+          style={[styles.customBtn, filter === 'time' && styles.customBtnActive, { borderColor: theme.colors.outlineVariant }]}
+          onPress={() => setFilter('time')}
+          activeOpacity={0.8}
+        >
+          <MaterialCommunityIcons name="clock-outline" size={18} color={theme.colors.onBackground} />
+          <Text style={[styles.customBtnText, { color: theme.colors.onBackground }]}>Все время пути</Text>
+          <MaterialCommunityIcons name="menu-down" size={20} color={theme.colors.onBackground} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.customBtn, filter === 'distance' && styles.customBtnActive, { borderColor: theme.colors.outlineVariant }]}
+          onPress={() => setFilter('distance')}
+          activeOpacity={0.8}
+        >
+          <MaterialCommunityIcons name="truck" size={18} color={theme.colors.onBackground} />
+          <Text style={[styles.customBtnText, { color: theme.colors.onBackground }]}>Все дистанции</Text>
+          <MaterialCommunityIcons name="menu-down" size={20} color={theme.colors.onBackground} />
+        </TouchableOpacity>
       </View>
       <FlatList
         data={deliveries}
@@ -81,12 +101,32 @@ const styles = StyleSheet.create({
   },
   filters: {
     flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 8,
+    gap: 8,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 8,
   },
-  filterBtn: {
+  customBtn: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    backgroundColor: 'transparent',
+    minHeight: 36,
+    justifyContent: 'center',
+    gap: 4,
+  },
+  customBtnActive: {
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderColor: '#fff',
+  },
+  customBtnText: {
+    flex: 1,
+    marginLeft: 2,
+    fontSize: 15,
+    textAlign: 'left',
   },
 }); 
