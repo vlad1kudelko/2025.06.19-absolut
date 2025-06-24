@@ -30,7 +30,7 @@ export default function TabLayout() {
         name="deliveries"
         options={{
           title: 'Доставки',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="shippingbox.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="car.fill" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -44,7 +44,7 @@ export default function TabLayout() {
         name="more"
         options={{
           title: 'Еще',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="ellipsis.circle.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="menu.fill" color={color} />,
         }}
       />
     </Tabs>
