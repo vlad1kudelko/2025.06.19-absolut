@@ -179,33 +179,27 @@ export default function DeliveriesScreen() {
         data={deliveries}
         keyExtractor={(_, idx) => String(idx)}
         renderItem={({ item }) => {
-          const dateStr = item.departure_datetime || item.created_at;
-          const now = dayjs();
-          const created = dayjs(dateStr);
-          const diffDays = now.diff(created, 'day');
-          const totalHours = now.diff(created, 'hour');
-          const diffHours = totalHours - diffDays * 24;
-          function plural(num: number, one: string, few: string, many: string) {
-            if (num % 10 === 1 && num % 100 !== 11) return one;
-            if ([2,3,4].includes(num % 10) && ![12,13,14].includes(num % 100)) return few;
-            return many;
+          function formatDuration(durationStr: string) {
+            if (!durationStr) return '';
+            const parts = durationStr.split(':');
+            if (parts.length === 3) {
+              const [h, m, s] = parts;
+              const hours = parseInt(h, 10);
+              const minutes = parseInt(m, 10);
+              let res = '';
+              if (hours > 0) res += `${hours} ч `;
+              if (minutes > 0) res += `${minutes} м`;
+              return res.trim() || 'меньше минуты';
+            }
+            return durationStr;
           }
-          let timeAgo = '';
-          if (diffDays > 0) {
-            timeAgo += `${diffDays} ${plural(diffDays, 'день', 'дня', 'дней')}`;
-          }
-          if (diffHours > 0) {
-            if (timeAgo) timeAgo += ' ';
-            timeAgo += `${diffHours} ${plural(diffHours, 'час', 'часа', 'часов')}`;
-          }
-          if (!timeAgo) timeAgo = 'только что';
-          else timeAgo += ' назад';
+          const transit = formatDuration(item.transit_time);
           return (
             <View style={[styles.card, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.outlineVariant }]}> 
               <Text variant="titleMedium" style={{ color: theme.colors.onBackground }}>Доставка №{item.id}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <MaterialCommunityIcons name="clock-outline" size={18} color={theme.colors.onBackground} style={{ marginRight: 4 }} />
-                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{timeAgo}</Text>
+                <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{transit}</Text>
                 <MaterialCommunityIcons name="truck" size={18} color={theme.colors.onBackground} style={{ marginLeft: 8, marginRight: 4 }} />
                 <Text variant="bodyMedium" style={[styles.info, { color: theme.colors.onBackground }]}>{item.distance} км</Text>
               </View>
