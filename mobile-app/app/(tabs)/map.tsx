@@ -1,5 +1,5 @@
-import { View, Text } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { View } from 'react-native';
+import { useTheme, Appbar, IconButton } from 'react-native-paper';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useState } from 'react';
 
@@ -12,6 +12,10 @@ export default function MapScreen() {
   ]);
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 0, shadowOpacity: 0 }}>
+        <Appbar.Content title="Карта" titleStyle={{ color: theme.colors.onBackground }} />
+        <IconButton icon="plus" onPress={() => {}} accessibilityLabel="Создать" size={24} iconColor={theme.colors.onBackground} />
+      </Appbar.Header>
       <MapView
         style={{ flex: 1 }}
         provider={PROVIDER_GOOGLE}
