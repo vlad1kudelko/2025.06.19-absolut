@@ -1,5 +1,5 @@
 import { View, FlatList, StyleSheet } from 'react-native';
-import { Card, Text, useTheme } from 'react-native-paper';
+import { Card, Text, useTheme, Appbar, IconButton } from 'react-native-paper';
 
 const deliveries = [
   {
@@ -41,7 +41,12 @@ function DeliveryItem({ item }: { item: typeof deliveries[0] }) {
 export default function DeliveriesScreen() {
   const theme = useTheme();
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+      <Appbar.Header style={{ backgroundColor: theme.colors.background, elevation: 0, shadowOpacity: 0 }}>
+        <Appbar.Content title="Доставка" titleStyle={{ color: theme.colors.onBackground }} />
+        <IconButton icon="filter-variant" onPress={() => {}} accessibilityLabel="Фильтр" size={24} iconColor={theme.colors.onBackground} />
+        <IconButton icon="magnify" onPress={() => {}} accessibilityLabel="Поиск" size={24} iconColor={theme.colors.onBackground} />
+      </Appbar.Header>
       <FlatList
         data={deliveries}
         keyExtractor={item => item.id}
